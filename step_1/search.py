@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify
-from utils import get_the_newest_film, get_films_dy_range, get_films_by_rating
+from utils import get_the_newest_film, get_films_dy_range, get_films_by_rating, search_by_genre
 
 search_by_name_blueprint = Blueprint('search_blueprint', __name__, template_folder="templates")
 search_by_range_blueprint = Blueprint('search_by_range_blueprint', __name__, template_folder="templates")
@@ -23,4 +23,5 @@ def search_by_rating(group):
 
 @search_by_genre_blueprunt.route('/genre/<genre>')
 def search_by_genge(genre):
-    pass
+    films = search_by_genre(genre)
+    return jsonify(films)

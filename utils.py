@@ -54,7 +54,6 @@ def get_films_by_rating(group):
                   'family': '"G", "PG", "PG-13"',
                   'adult': '"R", "NC-17"'}
     group_rating = dict_group[group]
-    # return group_rating
     sqlite_query = f"""SELECT title,rating, description
                                 FROM netflix
                                 WHERE rating IN ({group_rating})
@@ -69,5 +68,61 @@ def get_films_by_rating(group):
         dict_film['description'] = i[2]
         lict_films.append(dict_film)
     return lict_films
+
+
+def search_by_genre(genre):
+    """получаем название жанра и формируем запрос. Получаем и сохраняем данные о фильмах в списке словарей"""
+    sqlite_query = f"""SELECT title, description, release_year, listed_in
+                                    FROM netflix
+                                    WHERE listed_in LIKE "%{genre}%"
+                                    AND `type`='Movie' 
+                                    ORDER BY release_year DESC
+                                    LIMIT 10 """
+    gotten_data = sqlite3_start_connection(sqlite_query)
+    lict_films = []
+    dict_film = {}
+    for i in gotten_data:
+        dict_film['title'] = i[0]
+        dict_film['description'] = i[1]
+        lict_films.append(dict_film)
+    return lict_films
+
+def search_actors(first_actor, second_actor):
+    sqlite_query = f"""SELECT `cast`
+                       FROM netflix
+                       WHERE `cast` LIKE '%{first_actor}%'
+                       AND `cast` LIKE '%{second_actor}%'
+                                        """
+    gotten_data = sqlite3_start_connection(sqlite_query)
+    lict_actors = []
+    for cast in gotten_data:
+        lict_actors.extend(cast[0].split(', '))
+    result = []
+    for actor in lict_actors:
+        if actor not in [first_actor,second_actor]:
+            if lict_actors.count(actor) > 2:
+                result.append(actor)
+    result = set(result)
+    return result
+
+def search_by(type,release_year, genre):
+    """Поиск по типу , года выпуска, и жанру"""
+    sqlite_query = f"""SELECT title, description, release_year, listed_in
+                                        FROM netflix
+                                        WHERE listed_in LIKE "%{genre}%"
+                                        AND `type` LIKE "%{type}%"
+                                        AND release_year LIKE "%{release_year}%"
+                                """
+    gotten_data = sqlite3_start_connection(sqlite_query)
+    lict_films = []
+    dict_film = {}
+    for i in gotten_data:
+        dict_film['title'] = i[0]
+        dict_film['description'] = i[1]
+        lict_films.append(dict_film)
+    return lict_films
+
+
+
 
 
