@@ -87,6 +87,7 @@ def search_by_genre(genre):
         lict_films.append(dict_film)
     return lict_films
 
+
 def search_actors(first_actor, second_actor):
     sqlite_query = f"""SELECT `cast`
                        FROM netflix
@@ -99,18 +100,19 @@ def search_actors(first_actor, second_actor):
         lict_actors.extend(cast[0].split(', '))
     result = []
     for actor in lict_actors:
-        if actor not in [first_actor,second_actor]:
+        if actor not in [first_actor, second_actor]:
             if lict_actors.count(actor) > 2:
                 result.append(actor)
     result = set(result)
     return result
 
-def search_by(type,release_year, genre):
+
+def search_by(type_product, release_year, genre):
     """Поиск по типу , года выпуска, и жанру"""
     sqlite_query = f"""SELECT title, description, release_year, listed_in
                                         FROM netflix
                                         WHERE listed_in = "{genre}"
-                                        AND `type` = "{type}"
+                                        AND `type` = "{type_product}"
                                         AND release_year = "{release_year}"
                                 """
     gotten_data = sqlite3_start_connection(sqlite_query)
@@ -121,9 +123,3 @@ def search_by(type,release_year, genre):
         dict_film['description'] = i[1]
         lict_films.append(dict_film)
     return lict_films
-print(search_by("Movie", "2016", "Dramas"))
-
-
-
-
-
